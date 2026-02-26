@@ -1,0 +1,54 @@
+/// MattingIterationKernel: Performs one iteratiion of a MAP matting algorithm
+kernel MattingIterationKernel : ImageComputationKernel<ePixelWise> {
+  // Input and output images
+  Image<eRead, eAccessRandom, eEdgeClamped> src;  // randomly accessing and edge clamping
+  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;  // randomly accessing and edge clamping
+  Image<eRead, eAccessPoint> mu_background;
+  Image<eRead, eAccessPoint> sigma_background;
+  Image<eWrite, eAccessPoint> at;
+
+// Parameters are made available to the user as knobs.
+param:
+  float prior_weight;   // Weighting factor controlling the strength of the prior relative to the likelihood.
+  float neighbour_weight; // Weighting factor controlling the strength of each neighbour to the prior
+  int neighbours; // How many neighbours to sample from for the prior
+  float threshold;  // Threshold for the likelihood
+
+  // In define(), parameters can be given labels and default values.
+  // Size and Centre are affected by the proxy scaling.
+  void define() {
+    defineParam(prior_weight, "Prior Weight", 1.0f);
+    defineParam(neighbour_weight, "Neighbour Weight", 1.0f);
+    defineParam(neighbours, "Neighbours", 8.0f);
+    defineParam(threshold, "Threshold", 0.1f);
+  }
+
+local:
+  int2 offsets[8] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} };
+
+  // The init() function is run once before any calls to process().
+  void init() {
+    
+  }
+
+  // The process() function runs over all pixel positions of the output image.
+  // The int3 pos parameter is used to indicate positions x, y and the component.
+  void process(int3 pos) {
+    float likelihood_alpha_0 = -0.5f * (src(pos) - mu_background(0, 0, 0)).transpose() / sigma_background (0, 0, 0) * (src(pos) - mu_background(0, 0, 0));
+    
+    float prior_alpha_0 = 0.0f;
+    for (int i = 0; i < neighbours; i++) {
+      int2 neighbour_pos = pos.xy + offsets[i];
+      prior_alpha_0 += neighbour_weight * 0.0f != at_minus_1(neighbour_pos) ? 1.0f : 0.0f;
+    }
+
+    float prior_alpha_1 = 0.0f;
+    for (int i = 0; i < neighbours; i++) {
+      int2 neighbour_pos = pos.xy + offsets[i];
+      prior_alpha_1 += neighbour_weight * 1.0f != at_minus_1(neighbour_pos) ? 1.0f : 0.0f;
+    }
+
+    at(pos) = (likelihood_alpha_0 + prior_weight * prior_alpha_0) >=   (likelihood_alpha_1 + prior_weight * prior_alpha_1) ? 1.0f : 0.0f;
+  }
+};
+
