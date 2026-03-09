@@ -1,54 +1,108 @@
-/// MattingIterationKernel: Performs one iteratiion of a MAP matting algorithm
+/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm
 kernel MattingIterationKernel : ImageComputationKernel<ePixelWise> {
   // Input and output images
-  Image<eRead, eAccessRandom, eEdgeClamped> src;  // randomly accessing and edge clamping
-  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;  // randomly accessing and edge clamping
-  Image<eRead, eAccessPoint> mu_background;
-  Image<eRead, eAccessPoint> sigma_background;
-  Image<eWrite, eAccessPoint> at;
+  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image
+  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration
+  Image<eRead, eAccessPoint> mu_background;               // background mean colour
+  Image<eRead, eAccessPoint> sigma_background;            // background variance
+  Image<eWrite, eAccessPoint> at;                         // output alpha matte
 
-// Parameters are made available to the user as knobs.
 param:
-  float prior_weight;   // Weighting factor controlling the strength of the prior relative to the likelihood.
-  float neighbour_weight; // Weighting factor controlling the strength of each neighbour to the prior
-  int neighbours; // How many neighbours to sample from for the prior
-  float threshold;  // Threshold for the likelihood
+  float prior_weight;     
+  float neighbour_weight;
+  float sigma;            // Controls gaussian falloff of neighbour importance
+  int neighbours;         
+  float threshold;        
+  bool first_iteration;   // Is this a first iteration node?
+  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones
 
   // In define(), parameters can be given labels and default values.
-  // Size and Centre are affected by the proxy scaling.
   void define() {
     defineParam(prior_weight, "Prior Weight", 1.0f);
     defineParam(neighbour_weight, "Neighbour Weight", 1.0f);
-    defineParam(neighbours, "Neighbours", 8.0f);
+    defineParam(sigma, "Gaussian Sigma", 1.0f);
+    defineParam(neighbours, "Neighbours", 8);
     defineParam(threshold, "Threshold", 0.1f);
+    defineParam(first_iteration, "First Iteration", false);
+    defineParam(init_mode, "Init Mode", 0);
   }
 
 local:
-  int2 offsets[8] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} };
+  int _offsets_x[8];
+  int _offsets_y[8];
+  float _weights[8];
 
   // The init() function is run once before any calls to process().
   void init() {
-    
+    // 8-connected neighbourhood offsets
+    _offsets_x[0] =  1; _offsets_y[0] =  0;
+    _offsets_x[1] = -1; _offsets_y[1] =  0;
+    _offsets_x[2] =  0; _offsets_y[2] =  1;
+    _offsets_x[3] =  0; _offsets_y[3] = -1;
+    _offsets_x[4] =  1; _offsets_y[4] =  1;
+    _offsets_x[5] = -1; _offsets_y[5] = -1;
+    _offsets_x[6] =  1; _offsets_y[6] = -1;
+    _offsets_x[7] = -1; _offsets_y[7] =  1;
+
+    // Calculate Gaussian weights based on distance
+    float s = max(0.01f, sigma);
+    for (int i = 0; i < 8; i++) {
+      float dx = (float)_offsets_x[i];
+      float dy = (float)_offsets_y[i];
+      float distSq = dx * dx + dy * dy;
+      _weights[i] = expf(-distSq / (2.0f * s * s));
+    }
   }
 
-  // The process() function runs over all pixel positions of the output image.
-  // The int3 pos parameter is used to indicate positions x, y and the component.
-  void process(int3 pos) {
-    float likelihood_alpha_0 = -0.5f * (src(pos) - mu_background(0, 0, 0)).transpose() / sigma_background (0, 0, 0) * (src(pos) - mu_background(0, 0, 0));
-    
-    float prior_alpha_0 = 0.0f;
-    for (int i = 0; i < neighbours; i++) {
-      int2 neighbour_pos = pos.xy + offsets[i];
-      prior_alpha_0 += neighbour_weight * 0.0f != at_minus_1(neighbour_pos) ? 1.0f : 0.0f;
+  // The process function computes one pixel of the output alpha matte.
+  void process(int2 pos) {
+    float energy_likelihood_0 = 0.0f;
+    for (int c = 0; c < 3; c++) {
+      float diff = src(pos.x, pos.y, c) - mu_background(c);
+      float var  = sigma_background(c);
+      energy_likelihood_0 += 0.5f * diff * diff / var;
     }
 
-    float prior_alpha_1 = 0.0f;
-    for (int i = 0; i < neighbours; i++) {
-      int2 neighbour_pos = pos.xy + offsets[i];
-      prior_alpha_1 += neighbour_weight * 1.0f != at_minus_1(neighbour_pos) ? 1.0f : 0.0f;
+    float energy_likelihood_1 = threshold;
+
+    // If it's the first iteration
+    if (first_iteration) {
+      if (init_mode == 1) {
+        // All zeros: everything starts as background
+        at() = 0.0f;
+      } else if (init_mode == 2) {
+        // All ones: everything starts as foreground
+        at() = 1.0f;
+      } else {
+        // Maximum likelihood solution
+        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;
+      }
+      return;
     }
 
-    at(pos) = (likelihood_alpha_0 + prior_weight * prior_alpha_0) >=   (likelihood_alpha_1 + prior_weight * prior_alpha_1) ? 1.0f : 0.0f;
+    // Prior
+    float energy_prior_0 = 0.0f;
+    for (int i = 0; i < neighbours; i++) {
+      int nx = pos.x + _offsets_x[i];
+      int ny = pos.y + _offsets_y[i];
+      float neighbour_alpha = at_minus_1(nx, ny, 0);
+
+      energy_prior_0 += neighbour_weight * _weights[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);
+    }
+
+
+    float energy_prior_1 = 0.0f;
+    for (int i = 0; i < neighbours; i++) {
+      int nx = pos.x + _offsets_x[i];
+      int ny = pos.y + _offsets_y[i];
+      float neighbour_alpha = at_minus_1(nx, ny, 0);
+      
+      energy_prior_1 += neighbour_weight * _weights[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);
+    }
+
+    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;
+    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;
+
+    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;
   }
 };
-
