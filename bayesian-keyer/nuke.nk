@@ -1,0 +1,549 @@
+#! C:/Program Files/Nuke16.0v8/nuke-16.0.8.dll -nx
+version 16.0 v8
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="0" w="1919" h="1001" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1256" stretch="1"/>
+            <splitter orientation="2">
+                <split size="563"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="396"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+                <page id="Scenegraph.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name C:/Users/jjzsi/source/repos/motion-picture-engineering/nuke.nk
+ frame 49
+ first_frame 46
+ last_frame 50
+ lock_range true
+ format "2048 1556 0 0 2048 1556 1 2K_Super_35(full-ap)"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ monitorOutLUT rec709
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Read {
+ inputs 0
+ file_type tiff
+ file "C:/Users/jjzsi/source/repos/motion-picture-engineering/test sequence/Hula.#####.tiff"
+ format "2048 1080 0 0 2048 1080 1 2K_DCP"
+ first 46
+ last 50
+ origfirst 46
+ origlast 50
+ origset true
+ name Read1
+ xpos 98
+ ypos -787
+}
+set Ne5d57700 [stack 0]
+Inference {
+ modelFile C:/Users/jjzsi/source/repos/motion-picture-engineering/torch_model.cat
+ serialiseKnob {}
+ name Inference1
+ xpos 587
+ ypos -523
+}
+set Ne5d57200 [stack 0]
+Write {
+ channels rgba
+ file C:/Users/jjzsi/source/repos/motion-picture-engineering/nn_mattes/Hula.####.png
+ file_type png
+ checkHashOnRead false
+ version 17
+ ocioColorspace scene_linear
+ display default
+ view sRGB
+ name Write1
+ xpos 353
+ ypos -390
+}
+Constant {
+ inputs 0
+ channels rgb
+ color {0.005 0.005 0.005 0}
+ color_panelDropped true
+ name Constant2
+ xpos -74
+ ypos -604
+}
+set Ndfdbe000 [stack 0]
+Constant {
+ inputs 0
+ channels rgb
+ color {0.08 0.4 0.25 0}
+ color_panelDropped true
+ name Constant1
+ xpos -213
+ ypos -601
+}
+set Ndfdbea00 [stack 0]
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ndfdbe000
+push $Ndfdbea00
+push $Ne5d57700
+push $Ne5d57700
+Group {
+ inputs 31
+ name MattingIterations
+ selected true
+ xpos -52
+ ypos -456
+ addUserKnob {20 MattingParameters l "" +STARTLINE}
+ addUserKnob {7 PriorWeight l "Prior Weight"}
+ PriorWeight 1
+ addUserKnob {7 NeighbourWeight l "Neighbour Weight"}
+ NeighbourWeight 10
+ addUserKnob {3 Neighbours l "Num Neighbours"}
+ Neighbours 8
+ addUserKnob {7 Threshold R 0 100}
+ Threshold 2
+ addUserKnob {7 NeighbourSigma l "Neighbour Sigma" R 0 10}
+ NeighbourSigma 1
+}
+ Input {
+  inputs 0
+  name sigma_background
+  xpos 133
+  ypos 69
+  number 3
+ }
+set Ne5d48d80 [stack 0]
+ Input {
+  inputs 0
+  name mu_background
+  xpos 143
+  ypos 201
+  number 2
+ }
+set Ne5d49200 [stack 0]
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+push $Ne5d48d80
+push $Ne5d49200
+ Input {
+  inputs 0
+  name Input2
+  xpos -180
+  ypos -251
+  number 1
+ }
+ Input {
+  inputs 0
+  name src
+  xpos -434
+  ypos 66
+ }
+set Ne5d49b00 [stack 0]
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 6
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  "MattingIterationKernel_First Iteration" true
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript1
+  xpos -180
+  ypos -178
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 15
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript2
+  xpos -180
+  ypos -107
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 15
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript3
+  xpos -180
+  ypos -21
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 15
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript4
+  xpos -180
+  ypos 44
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 16
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript5
+  xpos -180
+  ypos 126
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 6
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript6
+  xpos -180
+  ypos 211
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 6
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript7
+  xpos -178
+  ypos 275
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 6
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript8
+  xpos -185
+  ypos 350
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 15
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript9
+  xpos -185
+  ypos 420
+ }
+push $Ne5d49b00
+ BlinkScript {
+  inputs 4
+  kernelSourceFile C:/Users/jjzsi/source/repos/motion-picture-engineering/blinkscript.rpp
+  recompileCount 15
+  ProgramGroup 1
+  KernelDescription "3 \"MattingIterationKernel\" iterate pixelWise 79196b3a8746dd1c404cad12e624b748a64e50a6fc4a7a9bad24acfbe7d86341 5 \"src\" Read Random \"at_minus_1\" Read Random \"mu_background\" Read Point \"sigma_background\" Read Point \"at\" Write Point 7 \"Prior Weight\" Float 1 AACAPw== \"Neighbour Weight\" Float 1 AACAPw== \"Gaussian Sigma\" Float 1 AACAPw== \"Neighbours\" Int 1 CAAAAA== \"Threshold\" Float 1 zczMPQ== \"First Iteration\" Bool 1 AA== \"Init Mode\" Int 1 AAAAAA== 7 \"prior_weight\" 1 1 Default \"neighbour_weight\" 1 1 Default \"sigma\" 1 1 Default \"neighbours\" 1 1 Default \"threshold\" 1 1 Default \"first_iteration\" 1 1 Default \"init_mode\" 1 1 Default 3 \"_offsets_x\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_offsets_y\" Int 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \"_weights\" Float 1 8 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  kernelSource "/// MattingIterationKernel: Performs one iteration of a MAP matting algorithm\nkernel MattingIterationKernel : ImageComputationKernel<ePixelWise> \{\n  // Input and output images\n  Image<eRead, eAccessRandom, eEdgeClamped> src;          // source image\n  Image<eRead, eAccessRandom, eEdgeClamped> at_minus_1;   // alpha matte from previous iteration\n  Image<eRead, eAccessPoint> mu_background;               // background mean colour\n  Image<eRead, eAccessPoint> sigma_background;            // background variance\n  Image<eWrite, eAccessPoint> at;                         // output alpha matte\n\nparam:\n  float prior_weight;     \n  float neighbour_weight;\n  float sigma;            // Controls gaussian falloff of neighbour importance\n  int neighbours;         \n  float threshold;        \n  bool first_iteration;   // Is this a first iteration node?\n  int init_mode;          // 0 = likelihood-only, 1 = all zeros, 2 = all ones\n\n  // In define(), parameters can be given labels and default values.\n  void define() \{\n    defineParam(prior_weight, \"Prior Weight\", 1.0f);\n    defineParam(neighbour_weight, \"Neighbour Weight\", 1.0f);\n    defineParam(sigma, \"Gaussian Sigma\", 1.0f);\n    defineParam(neighbours, \"Neighbours\", 8);\n    defineParam(threshold, \"Threshold\", 0.1f);\n    defineParam(first_iteration, \"First Iteration\", false);\n    defineParam(init_mode, \"Init Mode\", 0);\n  \}\n\nlocal:\n  int _offsets_x\[8];\n  int _offsets_y\[8];\n  float _weights\[8];\n\n  // The init() function is run once before any calls to process().\n  void init() \{\n    // 8-connected neighbourhood offsets\n    _offsets_x\[0] =  1; _offsets_y\[0] =  0;\n    _offsets_x\[1] = -1; _offsets_y\[1] =  0;\n    _offsets_x\[2] =  0; _offsets_y\[2] =  1;\n    _offsets_x\[3] =  0; _offsets_y\[3] = -1;\n    _offsets_x\[4] =  1; _offsets_y\[4] =  1;\n    _offsets_x\[5] = -1; _offsets_y\[5] = -1;\n    _offsets_x\[6] =  1; _offsets_y\[6] = -1;\n    _offsets_x\[7] = -1; _offsets_y\[7] =  1;\n\n    // Calculate Gaussian weights based on distance\n    float s = max(0.01f, sigma);\n    for (int i = 0; i < 8; i++) \{\n      float dx = (float)_offsets_x\[i];\n      float dy = (float)_offsets_y\[i];\n      float distSq = dx * dx + dy * dy;\n      _weights\[i] = expf(-distSq / (2.0f * s * s));\n    \}\n  \}\n\n  // The process function computes one pixel of the output alpha matte.\n  void process(int2 pos) \{\n    float energy_likelihood_0 = 0.0f;\n    for (int c = 0; c < 3; c++) \{\n      float diff = src(pos.x, pos.y, c) - mu_background(c);\n      float var  = sigma_background(c);\n      energy_likelihood_0 += 0.5f * diff * diff / var;\n    \}\n\n    float energy_likelihood_1 = threshold;\n\n    // If it's the first iteration\n    if (first_iteration) \{\n      if (init_mode == 1) \{\n        // All zeros: everything starts as background\n        at() = 0.0f;\n      \} else if (init_mode == 2) \{\n        // All ones: everything starts as foreground\n        at() = 1.0f;\n      \} else \{\n        // Maximum likelihood solution\n        at() = (energy_likelihood_1 < energy_likelihood_0) ? 1.0f : 0.0f;\n      \}\n      return;\n    \}\n\n    // Prior\n    float energy_prior_0 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n\n      energy_prior_0 += neighbour_weight * _weights\[i] * (neighbour_alpha != 0.0f ? 1.0f : 0.0f);\n    \}\n\n\n    float energy_prior_1 = 0.0f;\n    for (int i = 0; i < neighbours; i++) \{\n      int nx = pos.x + _offsets_x\[i];\n      int ny = pos.y + _offsets_y\[i];\n      float neighbour_alpha = at_minus_1(nx, ny, 0);\n      \n      energy_prior_1 += neighbour_weight * _weights\[i] * (neighbour_alpha != 1.0f ? 1.0f : 0.0f);\n    \}\n\n    float total_energy_0 = energy_likelihood_0 + prior_weight * energy_prior_0;\n    float total_energy_1 = energy_likelihood_1 + prior_weight * energy_prior_1;\n\n    at() = (total_energy_1 < total_energy_0) ? 1.0f : 0.0f;\n  \}\n\};\n"
+  rebuild ""
+  "MattingIterationKernel_Prior Weight" {{parent.PriorWeight}}
+  "MattingIterationKernel_Neighbour Weight" {{parent.NeighbourWeight}}
+  "MattingIterationKernel_Gaussian Sigma" {{parent.NeighbourSigma}}
+  MattingIterationKernel_Neighbours {{parent.Neighbours}}
+  MattingIterationKernel_Threshold {{parent.Threshold}}
+  format "2048 1080 0 0 2048 1080 1 2K_DCP"
+  specifiedFormat true
+  rebuild_finalise ""
+  name BlinkScript10
+  xpos -180
+  ypos 517
+ }
+ Output {
+  name Output1
+  xpos -180
+  ypos 615
+ }
+end_group
+set Nddc70700 [stack 0]
+Write {
+ channels rgba
+ file C:/Users/jjzsi/source/repos/motion-picture-engineering/map_mattes/Hula.####.png
+ file_type png
+ checkHashOnRead false
+ version 21
+ in_colorspace scene_linear
+ out_colorspace scene_linear
+ ocioColorspace scene_linear
+ display default
+ view sRGB
+ name Write2
+ xpos -107
+ ypos -355
+}
+Read {
+ inputs 0
+ file_type png
+ file "C:/Users/jjzsi/source/repos/motion-picture-engineering/ground truth/Hula.Fore.ACKGT.#####.png"
+ format "2048 1080 0 0 2048 1080 1 2K_DCP"
+ first 47
+ last 49
+ origfirst 47
+ origlast 49
+ origset true
+ name Read2
+ xpos 1082
+ ypos -649
+}
+push $Ne5d57700
+CheckerBoard2 {
+ inputs 0
+ format "2048 1080 0 0 2048 1080 1 2K_DCP"
+ name CheckerBoard1
+ xpos 271
+ ypos -783
+}
+set Ndfb65400 [stack 0]
+Merge2 {
+ inputs 2+1
+ operation in
+ maskChannelMask rgba.red
+ name Merge3
+ xpos 835
+ ypos -496
+}
+Write {
+ file "C:/Users/jjzsi/source/repos/motion-picture-engineering/ground truth/composite/Hula.####.png"
+ file_type png
+ create_directories true
+ checkHashOnRead false
+ version 1
+ ocioColorspace scene_linear
+ display default
+ view sRGB
+ name Write5
+ xpos 835
+ ypos -376
+}
+push $Ne5d57200
+push $Ne5d57700
+push $Ndfb65400
+Merge2 {
+ inputs 2+1
+ operation in
+ name Merge2
+ xpos 487
+ ypos -381
+}
+Write {
+ file C:/Users/jjzsi/source/repos/motion-picture-engineering/nn_mattes/composite/Hula.####.png
+ file_type png
+ create_directories true
+ checkHashOnRead false
+ version 2
+ ocioColorspace scene_linear
+ display default
+ view sRGB
+ name Write4
+ xpos 456
+ ypos -321
+}
+push $Nddc70700
+push $Ne5d57700
+push $Ndfb65400
+Merge2 {
+ inputs 2+1
+ operation in
+ name Merge1
+ xpos 11
+ ypos -343
+}
+set Ne11def00 [stack 0]
+push $Ne11def00
+Write {
+ file C:/Users/jjzsi/source/repos/motion-picture-engineering/map_mattes/composite/Hula.####.png
+ file_type png
+ create_directories true
+ checkHashOnRead false
+ version 7
+ ocioColorspace scene_linear
+ display default
+ view sRGB
+ name Write3
+ xpos -146
+ ypos -276
+}
+push $Ne5d57700
+ChromaKeyer {
+ _screenColor {0.09493999183 0.3966543078 0.2574456632}
+ _alphaBias {0.5 0.5 0.5}
+ _despillBias {0.5 0.5 0.5}
+ _replaceColor {1 1 1}
+ name ChromaKeyer1
+ xpos -508
+ ypos -590
+}
+Viewer {
+ inputs 7
+ frame 49
+ frame_range 46-50
+ input_number 6
+ colour_sample_bbox {-0.40625 0.00390625 -0.4052734375 0.0048828125}
+ samplepoints {
+  {-0.40625 0.00390625}
+ }
+ monitorOutNDISenderName "NukeX - nuke - Viewer1"
+ monitorOutOutputTransform rec709
+ name Viewer1
+ xpos 153
+ ypos -59
+}

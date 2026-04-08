@@ -1,0 +1,184 @@
+\documentclass{beamer}
+
+\mode<presentation>{
+    \usetheme{Madrid}
+    \usecolortheme{whale}
+    \setbeamertemplate{footline}[page number]
+    \setbeamertemplate{navigation symbols}{}
+}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+%----------------------------------------------------------------------------------------
+%   TITLE DATA
+%----------------------------------------------------------------------------------------
+
+\title[MAP Matting]{Image Matting}
+\author{Joseph Silva}
+\institute[TCD]{Trinity College Dublin \\ \medskip \textit{silvajo@tcd.ie}}
+\date{}
+\begin{document}
+
+% Slide 1: Title
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Slide 2: The Matting Problem
+\begin{frame}{Problem Formulation}
+    \textbf{Composition Equation:}
+    \[ I = \alpha F + (1-\alpha)B \]
+    \vfill
+    \textbf{Energy Minimization:}
+    \[ \hat{\alpha} = \arg\min [-\ln P(I | \alpha) - \ln P(\alpha)] \]
+\end{frame}
+
+% Slide 3: Likelihood Model
+\begin{frame}{Likelihood}
+    \[ E_{likelihood}(c | \alpha=0) = \frac{1}{2} \sum_{k \in \{R,G,B\}} \frac{(c_k - \mu_k)^2}{\sigma_k^2} \]
+    
+    \begin{itemize}
+        \item \textbf{$c$: source image}
+        \item \textbf{$\mu$: mean of background}
+        \item \textbf{$\sigma^2$: variance of background}
+    \end{itemize}
+\end{frame}
+
+% Slide 4: Spatial Prior (MRF)
+\begin{frame}{Prior}
+    \[ E_{prior}(\alpha_p) = \Lambda \sum_{q \in \mathcal{N}_p} w_{pq} \cdot ||\alpha_p \neq \alpha_q|| \]
+    
+    \[ w_{pq} = \exp\left( - \frac{d(p,q)^2}{2\sigma_{spatial}^2} \right) \]
+    
+    \begin{itemize}
+        \item Encourages neighboring pixels to have same labels.
+        \item \textbf{Hyperparameters:} $\mathcal{N}_p$ (number of neighbours), $\Lambda$ (prior strength) and $\sigma_{spatial}$ (per-neighbour weighting)
+    \end{itemize}
+\end{frame}
+
+% Slide 5: Implementation - BlinkScript & ICM
+\begin{frame}{Implementation: Optimizing the Posterior}
+    \begin{enumerate}
+        \item Use MLE (likelihood only) as the starting matte.
+        \item For each pixel $p$, update $\alpha_p$ to minimize total energy:
+        \[ \alpha_t[p] = \arg\min_{\alpha \in \{0,1\}} (E_{likelihood} + E_{prior}(\alpha, \alpha_{t-1}[\mathcal{N}_p])) \]
+    \end{enumerate}
+    \vfill
+    \centering
+    \fbox{\footnotesize \texttt{Value = (Energy\_FG < Energy\_BG) ? 1.0f : 0.0f;}}
+\end{frame}
+
+% Slide 6: Assessment Criteria
+\begin{frame}{Assessment Criteria}
+    Evaluation against Ground Truth (GT) using three core metrics:
+    \vfill
+    \begin{columns}
+        \column{0.33\textwidth}
+        \centering
+        \textbf{MSE} \\
+        \footnotesize Mean Squared Error \\
+        \textit{(Pixel Accuracy)}
+        
+        \column{0.33\textwidth}
+        \centering
+        \textbf{SSIM} \\
+        \footnotesize Structural Similarity \\
+        \textit{(Perceptual Quality)}
+        
+        \column{0.33\textwidth}
+        \centering
+        \textbf{IoU} \\
+        \footnotesize Intersection over Union \\
+        \textit{(Mask Overlap)}
+    \end{columns}
+    \vfill
+    \centering
+    \textit{Higher SSIM/IoU and lower MSE indicate better performance.}
+\end{frame}
+
+% Slide 7: Quantitative Results (Tuned MAP)
+\begin{frame}{Quantitative Results: MAP vs. U-Net}
+    \centering
+    \textbf{Metrics compared to provided Ground Truths}
+    \vfill
+    \begin{table}[]
+        \centering
+        \small
+        \begin{tabular}{@{}lccc@{}}
+            \toprule
+            Metric & MAP (Tuned) & U-Net (NN) & Performance \\ \midrule
+            \textbf{Matte MSE ($\downarrow$)} & \textbf{951.9} & 1135.4 & +16.2\% \\
+            \textbf{Matte SSIM ($\uparrow$)} & \textbf{0.974} & 0.969 & +0.5\% \\
+            \textbf{Matte IoU ($\uparrow$)} & \textbf{0.906} & 0.883 & +2.6\% \\
+            \textbf{Composite SSIM ($\uparrow$)} & \textbf{0.981} & 0.978 & +0.3\% \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+% Slide 9: Visual Fidelity - MAP vs GT
+\begin{frame}{Visual Fidelity: MAP vs Ground Truth}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{presentation_images/map_output.png} \\
+        \scriptsize MAP (Ours)
+        \vfill
+        \includegraphics[width=\textwidth]{presentation_images/gt_output.png} \\
+        \scriptsize Ground Truth
+    \end{minipage}
+\end{frame}
+
+% Slide 10: Visual Fidelity - U-Net vs GT
+\begin{frame}{Visual Fidelity: U-Net vs Ground Truth}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{presentation_images/nn_output.png} \\
+        \scriptsize U-Net
+        \vfill
+        \includegraphics[width=\textwidth]{presentation_images/gt_output.png} \\
+        \scriptsize Ground Truth
+    \end{minipage}
+\end{frame}
+
+% Slide 8: Comparison with Built-in Nuke Keyer (ChromaKeyer)
+\begin{frame}{ChromaKeyer vs MAP}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textbf{Soft Alpha} ($\alpha \in [0, 1]$)
+            \item Reproduces fine details / motion blur
+            \item Global per-pixel evaluation
+            \item Higher background noise/chatter
+            \item \textbf{MAP Solution:} Strictly Binary
+        \end{itemize}
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{presentation_images/map_output.png} \\
+        \footnotesize MAP Binary Result
+        \vfill
+        \includegraphics[width=0.8\textwidth]{presentation_images/chromakeyer_out.png} \\
+        \footnotesize ChromaKeyer Soft Result
+    \end{columns}
+\end{frame}
+
+% Slide 10: Shortcomings & Future Directions
+\begin{frame}{Shortcomings and Improvements}
+    \textbf{Current Shortcomings:}
+    \begin{itemize}
+        \item \textbf{Binary Constraint:} Cannot represent sub-pixel details (soft hair).
+        \item \textbf{Greedy Optimization:} ICM can get trapped in local energy minima.
+        \item \textbf{Iteration Count:} Requires multiple passes for full convergence.
+    \end{itemize}
+    \vfill
+    \textbf{Future Improvements:}
+    \begin{itemize}
+        \item \textbf{Soft Matting:} Generalize $\alpha \in [0, 1]$ using a continuous MRF or Matting Laplacian.
+        \item \textbf{Temporal Consistency:} Extend neighborhood $\mathcal{N}$ to 3D (spatial + time) for flicker reduction.
+    \end{itemize}
+\end{frame}
+
+\end{document}
